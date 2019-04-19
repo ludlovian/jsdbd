@@ -1,0 +1,46 @@
+{
+  "name": "jsdbd",
+  "version": "0.0.1",
+  "description": "daemon version of jsdb",
+  "main": "dist/client.js",
+  "module": "dist/client.mjs",
+  "bin": {
+      "jsdbd": "dist/jsdbd"
+  },
+  "source": "src",
+  "scripts": {
+    "clean": "rm -rf dist/ node_modules/.cache/ .nyc_output/ coverage/",
+    "format": "prettier-standard {src,test}/*.js",
+    "lint": "standard {src,test}/*.js | snazzy",
+    "coverage": "npm run test && nyc report --reporter=html && http-server coverage/ -p 8000",
+    "test": "nyc ava",
+    "build": "rollup -c rollup.config.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^1.4.1",
+    "esm": "^3.2.22",
+    "http-server": "^0.11.1",
+    "nyc": "^14.0.0",
+    "prettier-standard": "^9.1.1",
+    "rollup": "^1.10.1",
+    "rollup-plugin-cleanup": "^3.1.1",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-hashbang": "^2.2.2",
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-terser": "^4.0.4",
+    "snazzy": "^8.0.0",
+    "standard": "^12.0.1"
+  },
+  "ava": {
+    "require": [
+      "esm"
+    ]
+  },
+  "dependencies": {
+    "jsdb": "github:ludlovian/jsdb",
+    "jsrpc": "github:ludlovian/jsrpc",
+    "mri": "^1.1.4"
+  }
+}
