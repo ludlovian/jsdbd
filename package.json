@@ -1,11 +1,11 @@
 {
   "name": "jsdbd",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "daemon version of jsdb",
   "main": "dist/client.js",
   "module": "dist/client.mjs",
   "bin": {
-      "jsdbd": "dist/jsdbd"
+    "jsdbd": "dist/jsdbd"
   },
   "source": "src",
   "scripts": {
