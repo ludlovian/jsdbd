@@ -10,7 +10,9 @@ function main () {
   const options = readOptions()
   const server = new JsdbServer(options)
   const stop = server.stop.bind(server)
+  const reloadAll = server.reloadAll.bind(server)
   process.on('SIGTERM', stop).on('SIGINT', stop)
+  process.on('SIGUSR1', reloadAll)
   return server.start()
 }
 

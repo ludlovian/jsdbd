@@ -24,61 +24,78 @@ export default class JsdbServer extends RpcServer {
       this._dbs.set(filename, db)
     }
 
-    const db = this._dbs.get(filename)
+    const db = this.db(filename)
     return Object.values(db.indexes).map(ix => ix.options)
   }
 
+  reloadAll () {
+    this.log('reload')
+    return Promise.all(Array.from(this._dbs.values()).map(db => db.reload()))
+  }
+
+  stopServer () {
+    setTimeout(() => this.stop())
+  }
+
+  db (filename) {
+    const _db = this._dbs.get(filename)
+    if (!_db) throw new Error(`Not connected to database at: ${filename}`)
+    return _db
+  }
+
   async getAll (filename) {
-    return this._dbs.get(filename).getAll()
+    return this.db(filename).getAll()
   }
 
   async insert (filename, doc) {
-    return this._dbs.get(filename).insert(doc)
+    return this.db(filename).insert(doc)
   }
 
   async update (filename, doc) {
-    return this._dbs.get(filename).update(doc)
+    return this.db(filename).update(doc)
   }
 
   async delete (filename, doc) {
-    return this._dbs.get(filename).delete(doc)
+    return this.db(filename).delete(doc)
   }
 
   async ensureIndex (filename, options) {
-    return this._dbs.get(filename).ensureIndex(options)
+    return this.db(filename).ensureIndex(options)
   }
 
   async deleteIndex (filename, fieldName) {
-    return this._dbs.get(filename).deleteIndex(fieldName)
+    return this.db(filename).deleteIndex(fieldName)
   }
 
   async compact (filename) {
-    return this._dbs.get(filename).compact()
+    return this.db(filename).compact()
   }
 
   async setAutoCompaction (filename, interval) {
-    return this._dbs.get(filename).setAutoCompaction(interval)
+    return this.db(filename).setAutoCompaction(interval)
   }
 
   async stopAutoCompaction (filename) {
-    return this._dbs.get(filename).stopAutoCompaction()
+    return this.db(filename).stopAutoCompaction()
   }
 
   async indexFind (filename, ix, value) {
-    return this._dbs.get(filename).indexes[ix].find(value)
+    return this.db(filename).indexes[ix].find(value)
   }
 
   async indexFindOne (filename, ix, value) {
-    return this._dbs.get(filename).indexes[ix].findOne(value)
+    return this.db(filename).indexes[ix].findOne(value)
   }
 
   async indexGetAll (filename, ix) {
-    return this._dbs.get(filename).indexes[ix].getAll()
+    return this.db(filename).indexes[ix].getAll()
   }
 }
 
 const METHODS = [
   'connect',
+  'reloadAll',
+  'stopServer',
   'getAll',
   'insert',
   'update',

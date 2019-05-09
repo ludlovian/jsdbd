@@ -10,23 +10,14 @@ const exec = promisify(_exec)
 
 const DIR = './test-dbs~'
 const port = 39799
+
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 test.before(async t => {
   await exec(`rm -rf ${DIR};mkdir ${DIR}`)
-  await Datastore.ensureServer({
-    port,
-    command: 'dist/jsdbd',
-    idleTimeout: 10000
-  })
-  await Datastore.ensureServer({
-    port,
-    command: 'dist/jsdbd',
-    idleTimeout: 10000
-  })
 })
 
-test.after(async t => {
+test.serial.after(async t => {
   await exec(`rm -rf ${DIR}`)
 })
 
@@ -90,6 +81,17 @@ test('full activity', async t => {
   await db.insert({ noId: true })
   t.is((await db.getAll()).length, 2)
   t.is((await db.indexes._id.getAll()).length, 2)
+})
+
+test('reload', async t => {
+  const filename = t.context.file
+  const db = await Datastore.connect({ port, filename })
+  await db.insert({ _id: 1, foo: 'bar' })
+  t.is((await db.getAll()).length, 1)
+
+  await promisify(fs.writeFile)(t.context.file, '')
+  await Datastore.reloadAll()
+  t.is((await db.getAll()).length, 0)
 })
 
 test('empty data', async t => {

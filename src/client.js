@@ -15,21 +15,19 @@ export default class Datastore {
     for (const method of METHODS) {
       this[method] = client.call.bind(client, method, filename)
     }
+    // istanbul ignore next
     if (ping) setInterval(() => this.load(), ping).unref()
   }
 
   static async ensureServer (options) {
     const { port } = options
-    if (await serverActive(port)) return false
-    launchServer(options)
-    let ms = 10
-    while (ms < 2000) {
-      await delay(ms)
-      if (await serverActive(port)) return true
-      ms *= 2
+    // istanbul ignore if
+    if (!(await serverActive(port))) {
+      await startServer(options)
+      return true
+    } else {
+      return false
     }
-    // istanbul ignore next
-    throw new Error('Could not launch jsdbd')
   }
 
   static async connect (options) {
@@ -37,6 +35,15 @@ export default class Datastore {
     const datastore = new Datastore(options)
     await datastore.load()
     return datastore
+  }
+
+  static reloadAll () {
+    return client.call('reloadAll')
+  }
+
+  // istanbul ignore next
+  static stopServer () {
+    return client.call('stopServer')
   }
 
   async load () {
@@ -100,6 +107,7 @@ function serverActive (port) {
         resolve(true)
       })
     })
+    // istanbul ignore next
     conn.once('error', () => {
       clearTimeout(tm)
       resolve(false)
@@ -107,15 +115,24 @@ function serverActive (port) {
   })
 }
 
-function delay (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-function launchServer (options) {
-  // istanbul ignore next
-  const { port, idleTimeout, command = 'jsdbd' } = options
+// istanbul ignore next
+async function startServer (options) {
+  const { port, idleTimeout, log, command = 'jsdbd' } = options
   let cmd = `${command} --port ${port}`
-  // istanbul ignore else
   if (idleTimeout) cmd += ` --timeout ${idleTimeout}`
-  spawn(cmd, [], { detached: true, shell: true })
+  if (log) cmd += ' --log'
+  const proc = spawn(cmd, [], { detached: true, shell: true, stdio: 'inherit' })
+  proc.unref()
+  let ms = 10
+  while (ms < 2000) {
+    await delay(ms)
+    if (await serverActive(port)) return
+    ms *= 2
+  }
+  throw new Error('Could not launch jsdbd')
+
+  function delay (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
+
 }

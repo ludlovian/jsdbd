@@ -20,21 +20,24 @@ class Datastore {
   }
   static async ensureServer (options) {
     const { port } = options;
-    if (await serverActive(port)) return false
-    launchServer(options);
-    let ms = 10;
-    while (ms < 2000) {
-      await delay(ms);
-      if (await serverActive(port)) return true
-      ms *= 2;
+    if (!(await serverActive(port))) {
+      await startServer(options);
+      return true
+    } else {
+      return false
     }
-    throw new Error('Could not launch jsdbd')
   }
   static async connect (options) {
     await Datastore.ensureServer(options);
     const datastore = new Datastore(options);
     await datastore.load();
     return datastore
+  }
+  static reloadAll () {
+    return client.call('reloadAll')
+  }
+  static stopServer () {
+    return client.call('stopServer')
   }
   async load () {
     const indexes = await client.call('connect', this.options);
@@ -97,14 +100,23 @@ function serverActive (port) {
     });
   })
 }
-function delay (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-function launchServer (options) {
-  const { port, idleTimeout, command = 'jsdbd' } = options;
+async function startServer (options) {
+  const { port, idleTimeout, log, command = 'jsdbd' } = options;
   let cmd = `${command} --port ${port}`;
   if (idleTimeout) cmd += ` --timeout ${idleTimeout}`;
-  child_process.spawn(cmd, [], { detached: true, shell: true });
+  if (log) cmd += ' --log';
+  const proc = child_process.spawn(cmd, [], { detached: true, shell: true, stdio: 'inherit' });
+  proc.unref();
+  let ms = 10;
+  while (ms < 2000) {
+    await delay(ms);
+    if (await serverActive(port)) return
+    ms *= 2;
+  }
+  throw new Error('Could not launch jsdbd')
+  function delay (ms) {
+    return new Promise(resolve => setTimeout(resolve, ms))
+  }
 }
 
 module.exports = Datastore;
