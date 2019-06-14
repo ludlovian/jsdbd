@@ -134,5 +134,4 @@ async function startServer (options) {
   function delay (ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
-
 }
