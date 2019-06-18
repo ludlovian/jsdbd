@@ -14,7 +14,7 @@
     "lint": "standard {src,test}/*.js | snazzy",
     "coverage": "npm run test && nyc report --reporter=html && sirv coverage -H 0.0.0.0 -p 8000",
     "test": "nyc ava",
-    "pretest": "node -r esm src/jsdbd -p 39799 &",
+    "pretest": "node -r esm src/jsdbd --port 39799 --base . &",
     "posttest": "pkill -f src/jsdbd",
     "build": "rollup -c rollup.config.js"
   },
@@ -29,6 +29,7 @@
     "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-hashbang": "^2.2.2",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-resolve": "^5.0.2",
     "rollup-plugin-terser": "^5.0.0",
     "snazzy": "^8.0.0",

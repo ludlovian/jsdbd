@@ -2,11 +2,13 @@
 
 import RpcServer from 'jsrpc/server'
 import Datastore from 'jsdb'
+import { resolve } from 'path'
 
 export default class JsdbServer extends RpcServer {
   constructor (options) {
     super(options)
 
+    this._basePath = options.base
     this._dbs = new Map()
     for (const method of METHODS) {
       this.on(method, this[method].bind(this))
@@ -17,8 +19,10 @@ export default class JsdbServer extends RpcServer {
 
   async connect (options) {
     if (typeof options === 'string') options = { filename: options }
+
     const { filename } = options
     if (!this._dbs.has(filename)) {
+      options.filename = resolve(this._basePath || '', options.filename)
       const db = new Datastore(options)
       await db.load()
       this._dbs.set(filename, db)

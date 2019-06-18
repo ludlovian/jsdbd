@@ -3,13 +3,15 @@ import cleanup from 'rollup-plugin-cleanup'
 import hashbang from 'rollup-plugin-hashbang'
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
+import json from 'rollup-plugin-json'
 
 export default [
   {
     input: 'src/jsdbd.js',
-    external: ['util', 'http', 'https', 'fs'],
+    external: ['util', 'http', 'https', 'fs', 'path'],
     plugins: [
       hashbang(),
+      json(),
       resolve(),
       commonjs(),
       cleanup(),
