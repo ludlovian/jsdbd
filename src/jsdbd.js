@@ -33,10 +33,10 @@ function readOptions () {
 function showHelp () {
   console.log(
     `jsdbd v${version}\n\n` +
-      `Runs a jsdb daemon. Options:\n` +
-      `-t --timeout <ms>  Set the idle timeout (in ms) for the daemon to exit\n` +
-      `-p --port <n>      Set the port to listen on\n` +
-      `-b --base <dir>    Sets the base dir for database files\n` +
-      `-l --log           Turns on logging of calls to stdout\n`
+      'Runs a jsdb daemon. Options:\n' +
+      '-t --timeout <ms>  Set the idle timeout (in ms) for the daemon to exit\n' +
+      '-p --port <n>      Set the port to listen on\n' +
+      '-b --base <dir>    Sets the base dir for database files\n' +
+      '-l --log           Turns on logging of calls to stdout\n'
   )
 }

@@ -39,7 +39,7 @@ test('basic', async t => {
 test('full activity', async t => {
   const filename = t.context.file
   const db = await Datastore.connect({ port, filename, ping: 1000 })
-  let date = new Date(2018, 0, 19, 12, 34, 56)
+  const date = new Date(2018, 0, 19, 12, 34, 56)
   await db.insert({ _id: 1, foo: 'bar', date })
   let r
   r = await db.indexes._id.find(1)
@@ -70,7 +70,7 @@ test('full activity', async t => {
   await db.deleteIndex('foo')
   await db.deleteIndex('_id')
 
-  let file = await readFile(t.context.file, 'utf8')
+  const file = await readFile(t.context.file, 'utf8')
   t.snapshot(file)
 
   t.falsy(db.indexes.foo)
@@ -145,6 +145,6 @@ test('auto compaction', async t => {
   await delay(750)
   await db.stopAutoCompaction()
 
-  let file = await readFile(t.context.file, 'utf8')
+  const file = await readFile(t.context.file, 'utf8')
   t.snapshot(file)
 })

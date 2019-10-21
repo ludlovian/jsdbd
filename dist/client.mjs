@@ -79,7 +79,7 @@ const METHODS = [
 ];
 function serverActive (port) {
   return new Promise((resolve, reject) => {
-    let tm = setTimeout(
+    const tm = setTimeout(
       () => reject(new Error('timed out connecting to server')),
       500
     );
