@@ -1,115 +1,84 @@
 'use strict'
 
-import RpcServer from 'jsrpc/server'
+import { RpcServer } from 'jsrpc'
 import Datastore from 'jsdb'
 import { resolve } from 'path'
 
+import { jsdbMethods } from './util'
+
+let tick
+
 export default class JsdbServer extends RpcServer {
-  constructor (options) {
+  constructor ({ files = '.', idleTime = 30 * 60, ...options }) {
     super(options)
+    files = resolve(files)
 
-    this._basePath = options.base
-    this._dbs = new Map()
-    for (const method of METHODS) {
-      this.on(method, this[method].bind(this))
-    }
+    Object.assign(this, { files, idleTime })
 
-    if (options.log) this.log = console.log.bind(console)
-  }
+    this.openDatabases = new Map()
+    this.handle('shutdown', shutdown.bind(this))
+      .handle('status', status.bind(this))
+      .handle('dispatch', dispatch.bind(this))
+      .handle('housekeep', housekeep.bind(this))
+      .handle('clear', clear.bind(this))
 
-  async connect (options) {
-    if (typeof options === 'string') options = { filename: options }
+    setInterval(housekeep.bind(this), idleTime * 1000).unref()
 
-    const { filename } = options
-    if (!this._dbs.has(filename)) {
-      options.filename = resolve(this._basePath || '', options.filename)
-      const db = new Datastore(options)
-      await db.load()
-      this._dbs.set(filename, db)
-    }
-
-    const db = this.db(filename)
-    return Object.values(db.indexes).map(ix => ix.options)
-  }
-
-  reloadAll () {
-    this.log('reload')
-    return Promise.all(Array.from(this._dbs.values()).map(db => db.reload()))
-  }
-
-  stopServer () {
-    setTimeout(() => this.stop())
-  }
-
-  db (filename) {
-    const _db = this._dbs.get(filename)
-    if (!_db) throw new Error(`Not connected to database at: ${filename}`)
-    return _db
-  }
-
-  async getAll (filename) {
-    return this.db(filename).getAll()
-  }
-
-  async insert (filename, doc) {
-    return this.db(filename).insert(doc)
-  }
-
-  async update (filename, doc) {
-    return this.db(filename).update(doc)
-  }
-
-  async delete (filename, doc) {
-    return this.db(filename).delete(doc)
-  }
-
-  async ensureIndex (filename, options) {
-    return this.db(filename).ensureIndex(options)
-  }
-
-  async deleteIndex (filename, fieldName) {
-    return this.db(filename).deleteIndex(fieldName)
-  }
-
-  async compact (filename) {
-    return this.db(filename).compact()
-  }
-
-  async setAutoCompaction (filename, interval) {
-    return this.db(filename).setAutoCompaction(interval)
-  }
-
-  async stopAutoCompaction (filename) {
-    return this.db(filename).stopAutoCompaction()
-  }
-
-  async indexFind (filename, ix, value) {
-    return this.db(filename).indexes[ix].find(value)
-  }
-
-  async indexFindOne (filename, ix, value) {
-    return this.db(filename).indexes[ix].findOne(value)
-  }
-
-  async indexGetAll (filename, ix) {
-    return this.db(filename).indexes[ix].getAll()
+    startClock()
   }
 }
 
-const METHODS = [
-  'connect',
-  'reloadAll',
-  'stopServer',
-  'getAll',
-  'insert',
-  'update',
-  'delete',
-  'ensureIndex',
-  'deleteIndex',
-  'compact',
-  'setAutoCompaction',
-  'stopAutoCompaction',
-  'indexFind',
-  'indexFindOne',
-  'indexGetAll'
-]
+function startClock () {
+  if (tick != null) return
+  tick = 0
+  setInterval(() => tick++, 1000).unref()
+}
+
+function shutdown () {
+  setTimeout(() => this.stop(5000))
+}
+
+function status () {
+  return {
+    tick,
+    files: this.files,
+    databases: Array.from(this.openDatabases.entries()).map(
+      ([name, { db, tick }]) => ({ name, tick })
+    )
+  }
+}
+
+function housekeep () {
+  Array.from(this.openDatabases.entries()).forEach(
+    ([filename, { tick: lastTick, db }]) => {
+      if (tick - lastTick > this.idleTime) {
+        this.openDatabases.delete(filename)
+      }
+    }
+  )
+}
+
+function clear () {
+  this.openDatabases.clear()
+}
+
+async function dispatch (filename, method, ...args) {
+  if (!jsdbMethods.has(method)) {
+    throw new Error(`Unknown method: ${method}`)
+  }
+  const db = getDatabase.call(this, filename)
+  if (!db.loaded) await db.load()
+  return db[method](...args)
+}
+
+function getDatabase (filename) {
+  const data = this.openDatabases.get(filename)
+  if (data) {
+    data.tick = tick
+    return data.db
+  }
+
+  const db = new Datastore({ filename })
+  this.openDatabases.set(filename, { db, tick })
+  return db
+}

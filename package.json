@@ -14,9 +14,10 @@
     "lint": "standard {src,test}/*.js | snazzy",
     "coverage": "npm run test && nyc report --reporter=html && sirv coverage -H 0.0.0.0 -p 8000",
     "test": "nyc ava",
-    "pretest": "node -r esm src/jsdbd --port 39799 --base . &",
-    "posttest": "pkill -f src/jsdbd",
-    "build": "rollup -c rollup.config.js"
+    "pretest": "node -r esm src/jsdbd.js start --port 39799 --files . ",
+    "posttest": "node -r esm src/jsdbd.js stop --port 39799",
+    "build": "rollup -c rollup.config.js",
+    "postbuild": "chmod +x dist/jsdbd"
   },
   "author": "",
   "license": "ISC",
@@ -25,7 +26,7 @@
     "esm": "^3.2.25",
     "nyc": "^14.1.1",
     "prettier-standard": "^15.0.1",
-    "rollup": "^1.25.1",
+    "rollup": "^1.27.5",
     "rollup-plugin-cleanup": "^3.1.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-hashbang": "^2.2.2",
@@ -43,6 +44,6 @@
   "dependencies": {
     "jsdb": "github:ludlovian/jsdb",
     "jsrpc": "github:ludlovian/jsrpc",
-    "mri": "^1.1.4"
+    "sade": "^1.6.1"
   }
 }
