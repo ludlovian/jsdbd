@@ -91,7 +91,9 @@ async function showStatus ({ port }) {
   }
   console.log('Databases open:')
   for (const { name, tick } of databases) {
-    console.log(`  ${name} (${getRoughTime(status.tick - tick)})`)
+    console.log(
+      `  ${name} (${getRoughTime(status.tick - tick)})`
+    )
   }
 }
 

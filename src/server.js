@@ -66,19 +66,19 @@ async function dispatch (filename, method, ...args) {
   if (!jsdbMethods.has(method)) {
     throw new Error(`Unknown method: ${method}`)
   }
-  const db = getDatabase.call(this, filename)
-  if (!db.loaded) await db.load()
-  return db[method](...args)
-}
 
-function getDatabase (filename) {
-  const data = this.openDatabases.get(filename)
-  if (data) {
-    data.tick = tick
-    return data.db
+  // we have to find the database
+  filename = resolve(this.files, filename)
+  let db
+  const rec = this.openDatabases.get(filename)
+  if (rec) {
+    rec.tick = tick
+    db = rec.db
+  } else {
+    db = new Datastore(filename)
+    this.openDatabases.set(filename, { db, tick })
   }
 
-  const db = new Datastore({ filename })
-  this.openDatabases.set(filename, { db, tick })
-  return db
+  if (!db.loaded) await db.load()
+  return db[method](...args)
 }
