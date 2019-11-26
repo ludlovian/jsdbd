@@ -17,7 +17,8 @@
     "pretest": "node -r esm src/jsdbd.js start --port 39799 --files . ",
     "posttest": "node -r esm src/jsdbd.js stop --port 39799",
     "build": "rollup -c rollup.config.js",
-    "postbuild": "chmod +x dist/jsdbd"
+    "postbuild": "chmod +x dist/jsdbd",
+    "version": "npm run build && git add dist/jsdbd"
   },
   "author": "",
   "license": "ISC",
