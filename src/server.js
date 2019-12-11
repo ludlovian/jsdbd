@@ -1,4 +1,4 @@
-'use strict'
+import ms from 'ms'
 
 import { RpcServer } from 'jsrpc'
 import Datastore from 'jsdb'
@@ -6,14 +6,14 @@ import { resolve } from 'path'
 
 import { jsdbMethods } from './util'
 
-let tick
-
 export default class JsdbServer extends RpcServer {
-  constructor ({ files = '.', idleTime = 30 * 60, ...options }) {
+  constructor ({ files = '.', idleTime = '30m', ...options }) {
     super(options)
     files = resolve(files)
+    idleTime = ms(idleTime + '')
+    const startTime = Date.now()
 
-    Object.assign(this, { files, idleTime })
+    Object.assign(this, { files, idleTime, startTime })
 
     this.openDatabases = new Map()
     this.handle('shutdown', shutdown.bind(this))
@@ -23,15 +23,7 @@ export default class JsdbServer extends RpcServer {
       .handle('clear', clear.bind(this))
 
     setInterval(housekeep.bind(this), idleTime * 1000).unref()
-
-    startClock()
   }
-}
-
-function startClock () {
-  if (tick != null) return
-  tick = 0
-  setInterval(() => tick++, 1000).unref()
 }
 
 function shutdown () {
@@ -39,19 +31,22 @@ function shutdown () {
 }
 
 function status () {
+  const now = Date.now()
   return {
-    tick,
+    uptime: now - this.startTime,
+    idleTime: this.idleTime,
     files: this.files,
     databases: Array.from(this.openDatabases.entries()).map(
-      ([name, { db, tick }]) => ({ name, tick })
+      ([name, { db, lastTouch }]) => ({ name, uptime: now - lastTouch })
     )
   }
 }
 
 function housekeep () {
+  const now = Date.now()
   Array.from(this.openDatabases.entries()).forEach(
-    ([filename, { tick: lastTick, db }]) => {
-      if (tick - lastTick > this.idleTime) {
+    ([filename, { lastTouch }]) => {
+      if (now - lastTouch > this.idleTime) {
         this.openDatabases.delete(filename)
       }
     }
@@ -69,14 +64,15 @@ async function dispatch (filename, method, ...args) {
 
   // we have to find the database
   filename = resolve(this.files, filename)
+  const lastTouch = Date.now()
   let db
   const rec = this.openDatabases.get(filename)
   if (rec) {
-    rec.tick = tick
+    rec.lastTouch = lastTouch
     db = rec.db
   } else {
     db = new Datastore(filename)
-    this.openDatabases.set(filename, { db, tick })
+    this.openDatabases.set(filename, { db, lastTouch })
   }
 
   if (!db.loaded) await db.load()

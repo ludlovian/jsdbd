@@ -1,15 +1,15 @@
-'use strict'
-
 import { resolve } from 'path'
 import { homedir } from 'os'
 import { spawn } from 'child_process'
+
+import ms from 'ms'
 import sade from 'sade'
 
 import { RpcClient } from 'jsrpc'
 
 import JsdbServer from './server'
 import { version } from '../package.json'
-import { wrap, portActive, getRoughTime } from './util'
+import { wrap, portActive } from './util'
 
 const prog = sade('jsdbd')
 
@@ -25,7 +25,7 @@ prog
   .command('start', 'starts the server')
   .option('-f, --files', 'where files area stored', DEFAULT_FILES)
   .option('-s, --silent', 'be quiet')
-  .option('--idle-time', 'cleaning interval', 30 * 60)
+  .option('--idle-time', 'cleaning interval', '30m')
   .action(wrap(startServer))
 
 prog.command('clear', 'closes all databases').action(wrap(clearServer))
@@ -74,7 +74,7 @@ async function startServer (opts) {
 function runServer (opts) {
   const { idleTime, files, port } = opts
   const server = new JsdbServer({ idleTime, files, port })
-  const shutdown = () => server.stop(5000)
+  const shutdown = () => server.stop()
   process.on('SIGINT', shutdown).on('SIGTERM', shutdown)
   return server.start()
 }
@@ -82,7 +82,8 @@ function runServer (opts) {
 async function showStatus ({ port }) {
   const status = await sendCommand({ port }, 'status')
   console.log(`jsdb server running on port ${port}\n`)
-  console.log(`Uptime: ${getRoughTime(status.tick)}`)
+  console.log(`Uptime: ${ms(status.uptime, { long: true })}`)
+  console.log(`Housekeep every ${ms(status.idleTime)}`)
   console.log(`Database files: ${status.files}\n`)
   const { databases } = status
   if (!databases.length) {
@@ -90,10 +91,8 @@ async function showStatus ({ port }) {
     return
   }
   console.log('Databases open:')
-  for (const { name, tick } of databases) {
-    console.log(
-      `  ${name} (${getRoughTime(status.tick - tick)})`
-    )
+  for (const { name, uptime } of databases) {
+    console.log(`  ${name} (${ms(uptime, { long: true })})`)
   }
 }
 
