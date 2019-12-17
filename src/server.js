@@ -22,7 +22,7 @@ export default class JsdbServer extends RpcServer {
       .handle('housekeep', housekeep.bind(this))
       .handle('clear', clear.bind(this))
 
-    setInterval(housekeep.bind(this), idleTime * 1000).unref()
+    setInterval(housekeep.bind(this), idleTime).unref()
   }
 }
 
