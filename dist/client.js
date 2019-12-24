@@ -13,6 +13,7 @@ const jsdbMethods = new Set([
   'find',
   'findOne',
   'findAll',
+  'getAll',
   'compact',
   'reload'
 ]);
