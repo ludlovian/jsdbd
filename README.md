@@ -7,32 +7,60 @@ Daemon version of `jsdb`
 
 Is compatible with `jsdb` except the following changes
 
-### ensureServer
+To ensure the daemon is running, exec `jsdbd start --silent`.
 
-`await Datastore.ensureServer(options)`
 
-Ensures the server end is running, starting if not.
+### Datastore
 
-Options include
-- `port` - the port for the server (mandatory)
-- `command` - the command to launch the server (default: `jsdbd`)
-- `idleTimeout` - the idleTimeout for the server
+`const db = new Datastore(opts)`
 
-### connect
+Creates a connection to a remote db daemon.
 
-`db = await Datastore.connect(options)`
+Options:
+- `port` - the port of the server
+- `filename` - the name (relative to `files`) of the db file
 
-Must be awaited. Calls `ensureServer` as well, so `port` must be specified.
+### status
 
-In addition to the `jsdb` creation options (e.g. the mandatory `filename`), can also have
-- `ping` - the frequency in ms of a regular heartbeat to keep the server alive
+`const s = await Datastore.status()`
 
-`autoload` is pointless. Databases are loaded as you connect to them. Ditto `load` is redundant
+returns an object with the following:
+- `uptime` - uptime in ms
+- `idleTime` - idle/housekeep time in ms
+- `files` - where the db files are
+- `databases` - array of `{ name, uptime }` for each open database
 
-### stopAutoCompaction
+### housekeep
 
-this is now `await`-able
+`await Datastore.housekeep()`
+
+Performs housekeeping
+
+### clear
+
+`await Datastore.clear()`
+
+Closes all open databases (forced housekeeping)
+
+### shutdown
+
+`await Datastore.shutdown()`
+
+Requests the daemon to shutdown
+
 
 ## Server API
 
-`jsdbd -p|--port <port> -t|--timeout <timeout> -l|--log`
+run `jsdbd --help` for details, but options include:
+
+Commands include:
+- `status` - show the status of the server
+- `start` - start the server
+- `stop` - stop the server
+- `clear` - close any open databases. Will be re-opened on next use though.
+
+Options include:
+- `-f|--files` - where the db files can be found
+- `-s|--silent` - be quiet
+- `-p|--port` - port to use
+- `--idleTime` - cleaning/closing interval
