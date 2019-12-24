@@ -1,6 +1,6 @@
 {
   "name": "jsdbd",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "daemon version of jsdb",
   "main": "dist/client.js",
   "module": "dist/client.mjs",
