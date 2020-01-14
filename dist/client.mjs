@@ -17,7 +17,7 @@ const jsdbMethods = new Set([
 
 let client;
 const staticMethods = ['status', 'housekeep', 'clear', 'shutdown'];
-class Datastore {
+class Database {
   constructor (opts) {
     if (typeof opts === 'string') opts = { filename: opts };
     const { port = 39720, ...options } = opts;
@@ -25,7 +25,7 @@ class Datastore {
     if (!client) {
       client = new RpcClient({ port });
       for (const method of staticMethods) {
-        Datastore[method] = client.call.bind(client, method);
+        Database[method] = client.call.bind(client, method);
       }
     }
     const { filename } = this.options;
@@ -35,4 +35,4 @@ class Datastore {
   }
 }
 
-export default Datastore;
+export default Database;

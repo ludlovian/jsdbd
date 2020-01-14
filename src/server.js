@@ -1,7 +1,7 @@
 import ms from 'ms'
 
 import { RpcServer } from 'jsrpc'
-import Datastore from 'jsdb'
+import Database from 'jsdb'
 import { resolve } from 'path'
 
 import { jsdbMethods } from './util'
@@ -71,7 +71,7 @@ async function dispatch (filename, method, ...args) {
     rec.lastTouch = lastTouch
     db = rec.db
   } else {
-    db = new Datastore(filename)
+    db = new Database(filename)
     this.openDatabases.set(filename, { db, lastTouch })
   }
 

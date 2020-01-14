@@ -1,6 +1,6 @@
 'use strict'
 import test from 'ava'
-import Datastore from '../src/client'
+import Database from '../src/client'
 import fs from 'fs'
 import { promisify } from 'util'
 import { exec as _exec } from 'child_process'
@@ -27,7 +27,7 @@ test.beforeEach(t => {
 
 test('basic', async t => {
   const filename = t.context.file
-  const db = new Datastore({ port, filename })
+  const db = new Database({ port, filename })
   await db.insert({ _id: 1, foo: 'bar', ignoreThis: undefined })
   await db.ensureIndex({ fieldName: 'foo', sparse: true })
   const file = await readFile(filename, 'utf8')
@@ -36,7 +36,7 @@ test('basic', async t => {
 
 test('full activity', async t => {
   const filename = t.context.file
-  const db = new Datastore({ port, filename })
+  const db = new Database({ port, filename })
   const date = new Date(2018, 0, 19, 12, 34, 56)
   await db.insert({ _id: 1, foo: 'bar', date })
   let r
@@ -80,7 +80,7 @@ test('full activity', async t => {
 
 test('empty data', async t => {
   const filename = t.context.file
-  const db = new Datastore({ port, filename })
+  const db = new Database({ port, filename })
   t.is(await db.findOne('_id', 1), undefined)
   t.is(await db.find('_id', 1), undefined)
   await db.ensureIndex({ fieldName: 'foo' })
@@ -90,7 +90,7 @@ test('empty data', async t => {
 
 test('array indexes', async t => {
   const filename = t.context.file
-  const db = new Datastore({ port, filename })
+  const db = new Database({ port, filename })
   await db.ensureIndex({ fieldName: 'foo' })
   await db.insert({ _id: 1, foo: ['bar', 'baz'] })
   await db.insert({ _id: 2, foo: ['bar', 'bar'] })
@@ -106,7 +106,7 @@ test('array indexes', async t => {
 
 test('errors', async t => {
   const filename = t.context.file
-  const db = new Datastore({ port, filename })
+  const db = new Database({ port, filename })
   await t.throwsAsync(() => db.delete({ _id: 1 }))
   await t.throwsAsync(() => db.update({ _id: 1 }))
 

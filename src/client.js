@@ -7,7 +7,7 @@ let client
 
 const staticMethods = ['status', 'housekeep', 'clear', 'shutdown']
 
-export default class Datastore {
+export default class Database {
   constructor (opts) {
     // istanbul ignore if
     if (typeof opts === 'string') opts = { filename: opts }
@@ -17,7 +17,7 @@ export default class Datastore {
     if (!client) {
       client = new RpcClient({ port })
       for (const method of staticMethods) {
-        Datastore[method] = client.call.bind(client, method)
+        Database[method] = client.call.bind(client, method)
       }
     }
     const { filename } = this.options
