@@ -75,7 +75,7 @@ test('full activity', async t => {
   await db.compact()
 
   await db.insert({ noId: true })
-  t.is((await db.findAll('_id')).length, 2)
+  t.is((await db.getAll()).length, 2)
 })
 
 test('empty data', async t => {

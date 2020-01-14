@@ -10,7 +10,6 @@ const jsdbMethods = new Set([
   'delete',
   'find',
   'findOne',
-  'findAll',
   'getAll',
   'compact',
   'reload'
