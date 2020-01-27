@@ -57,3 +57,5 @@ export const jsdbMethods = new Set([
   'compact',
   'reload'
 ])
+
+export const jsdbErrors = new Set(['KeyViolation', 'NotExists', 'NoIndex'])

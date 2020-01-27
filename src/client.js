@@ -1,7 +1,7 @@
 'use strict'
 
 import { RpcClient } from 'jsrpc'
-import { jsdbMethods } from './util'
+import { jsdbMethods, jsdbErrors } from './util'
 
 let client
 
@@ -26,3 +26,7 @@ export default class Database {
     }
   }
 }
+
+jsdbErrors.forEach(name => {
+  Database[name] = RpcClient.error(name)
+})

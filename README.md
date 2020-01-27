@@ -10,9 +10,9 @@ Is compatible with `jsdb` except the following changes
 To ensure the daemon is running, exec `jsdbd start --silent`.
 
 
-### Datastore
+### Database
 
-`const db = new Datastore(opts)`
+`const db = new Database(opts)`
 
 Creates a connection to a remote db daemon.
 
@@ -22,7 +22,7 @@ Options:
 
 ### status
 
-`const s = await Datastore.status()`
+`const s = await Database.status()`
 
 returns an object with the following:
 - `uptime` - uptime in ms
@@ -32,19 +32,19 @@ returns an object with the following:
 
 ### housekeep
 
-`await Datastore.housekeep()`
+`await Database.housekeep()`
 
 Performs housekeeping
 
 ### clear
 
-`await Datastore.clear()`
+`await Database.clear()`
 
 Closes all open databases (forced housekeeping)
 
 ### shutdown
 
-`await Datastore.shutdown()`
+`await Database.shutdown()`
 
 Requests the daemon to shutdown
 

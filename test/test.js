@@ -107,16 +107,30 @@ test('array indexes', async t => {
 test('errors', async t => {
   const filename = t.context.file
   const db = new Database({ port, filename })
-  await t.throwsAsync(() => db.delete({ _id: 1 }))
-  await t.throwsAsync(() => db.update({ _id: 1 }))
+  await t.throwsAsync(() => db.delete({ _id: 1 }), {
+    instanceOf: Database.NotExists
+  })
+  await t.throwsAsync(() => db.update({ _id: 1 }), {
+    instanceOf: Database.NotExists
+  })
 
   await db.insert({ _id: 'foo', bar: 'baz' })
-  await t.throwsAsync(() => db.insert({ _id: 'foo', bar: 'baz' }))
+  await t.throwsAsync(() => db.insert({ _id: 'foo', bar: 'baz' }), {
+    instanceOf: Database.KeyViolation
+  })
 
   await db.ensureIndex({ fieldName: 'foo', unique: true })
   await db.insert({ _id: 1, foo: 'bar' })
-  await t.throwsAsync(() => db.insert({ _id: 2, foo: 'bar' }))
+  await t.throwsAsync(() => db.insert({ _id: 2, foo: 'bar' }), {
+    instanceOf: Database.KeyViolation
+  })
 
   await db.insert({ _id: 2, foo: 'baz' })
-  await t.throwsAsync(() => db.update({ _id: 1, foo: 'baz' }))
+  await t.throwsAsync(() => db.update({ _id: 1, foo: 'baz' }), {
+    instanceOf: Database.KeyViolation
+  })
+
+  await t.throwsAsync(() => db.find('bar', 'quux'), {
+    instanceOf: Database.NoIndex
+  })
 })

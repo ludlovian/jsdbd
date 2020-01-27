@@ -16,6 +16,7 @@ const jsdbMethods = new Set([
   'compact',
   'reload'
 ]);
+const jsdbErrors = new Set(['KeyViolation', 'NotExists', 'NoIndex']);
 
 let client;
 const staticMethods = ['status', 'housekeep', 'clear', 'shutdown'];
@@ -36,5 +37,8 @@ class Database {
     }
   }
 }
+jsdbErrors.forEach(name => {
+  Database[name] = jsrpc.RpcClient.error(name);
+});
 
 module.exports = Database;
