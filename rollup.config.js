@@ -36,6 +36,7 @@ export default [
       {
         file: 'dist/client.js',
         format: 'cjs',
+        exports: 'default',
         sourcemap: false
       },
       {
