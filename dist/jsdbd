@@ -120,7 +120,7 @@ async function dispatch (filename, method, ...args) {
   return db[method](...args)
 }
 
-var version = "2.3.0";
+var version = "2.3.1";
 
 const prog = sade__default['default']('jsdbd');
 const DEFAULT_FILES = path.resolve(os.homedir(), '.databases');
