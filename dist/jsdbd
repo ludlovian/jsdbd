@@ -1,2 +1,211 @@
 #!/usr/bin/env node
-"use strict";var e=require("path"),t=require("os"),s=require("child_process"),n=require("http"),r=require("events"),i=require("fs"),o=require("net");function a(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var c=a(n),l=a(r),u=a(i),d=1e3,h=60*d,f=60*h,p=24*f,m=7*p,g=365.25*p,w=function(e,t){t=t||{};var s=typeof e;if("string"===s&&e.length>0)return function(e){if((e=String(e)).length>100)return;var t=/^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(e);if(!t)return;var s=parseFloat(t[1]);switch((t[2]||"ms").toLowerCase()){case"years":case"year":case"yrs":case"yr":case"y":return s*g;case"weeks":case"week":case"w":return s*m;case"days":case"day":case"d":return s*p;case"hours":case"hour":case"hrs":case"hr":case"h":return s*f;case"minutes":case"minute":case"mins":case"min":case"m":return s*h;case"seconds":case"second":case"secs":case"sec":case"s":return s*d;case"milliseconds":case"millisecond":case"msecs":case"msec":case"ms":return s;default:return}}(e);if("number"===s&&isFinite(e))return t.long?function(e){var t=Math.abs(e);if(t>=p)return y(e,t,p,"day");if(t>=f)return y(e,t,f,"hour");if(t>=h)return y(e,t,h,"minute");if(t>=d)return y(e,t,d,"second");return e+" ms"}(e):function(e){var t=Math.abs(e);if(t>=p)return Math.round(e/p)+"d";if(t>=f)return Math.round(e/f)+"h";if(t>=h)return Math.round(e/h)+"m";if(t>=d)return Math.round(e/d)+"s";return e+"ms"}(e);throw new Error("val is not a non-empty string or a valid number. val="+JSON.stringify(e))};function y(e,t,s,n){var r=t>=1.5*s;return Math.round(e/s)+" "+n+(r?"s":"")}function v(e){return null==e?[]:Array.isArray(e)?e:[e]}function b(e,t,s,n){var r,i=e[t],o=~n.string.indexOf(t)?null==s||!0===s?"":String(s):"boolean"==typeof s?s:~n.boolean.indexOf(t)?"false"!==s&&("true"===s||(e._.push(0*(r=+s)==0?r:s),!!s)):0*(r=+s)==0?r:s;e[t]=null==i?o:Array.isArray(i)?i.concat(o):[i,o]}const _="__default__",x="\n";function $(e){if(!e.length)return"";let t=function(e){let t=0,s=0,n=0,r=e.length;if(r)for(;r--;)s=e[r].length,s>t&&(n=r,t=s);return e[n].length}(e.map((e=>e[0])))+4;return e.map((e=>e[0]+" ".repeat(t-e[0].length)+e[1]+(null==e[2]?"":`  (default ${e[2]})`)))}function O(e){return e}function D(e,t,s){if(!t||!t.length)return"";let n=0,r="";for(r+="\n  "+e;n<t.length;n++)r+="\n    "+s(t[n]);return r+x}var j=function(e,t,s,n){let r="",i=t[s],o=`$ ${e}`,a=t.__all__,c=e=>`${o} ${e}`.replace(/\s+/g," "),l=[["-h, --help","Displays this message"]];if(s===_&&l.unshift(["-v, --version","Displays current version"]),i.options=(i.options||[]).concat(a.options,l),i.options.length>0&&(i.usage+=" [options]"),r+=D("Description",i.describe,O),r+=D("Usage",[i.usage],c),n||s!==_)n||s===_||(r+=D("Aliases",i.alibi,c));else{let e,s=/^__/,n="",i=[];for(e in t)"string"==typeof t[e]||s.test(e)||i.push([e,(t[e].describe||[""])[0]])<3&&(n+=`\n    ${o} ${e} --help`);r+=D("Available Commands",$(i),O),r+="\n  For more info, run any command with the `--help` flag"+n+x}return r+=D("Options",$(i.options),O),r+=D("Examples",i.examples.map(c),O),r},A=function(e,t,s=1){let n=D("ERROR",[t],O);n+=`\n  Run \`$ ${e} --help\` for more info.\n`,console.error(n),process.exit(s)},T=function(e){return(e||"").split(/^-{1,2}|,|\s+-{1,2}|\s+/).filter(Boolean)},I=function(e){return(e||"").replace(/([.?!])\s*(?=[A-Z])/g,"$1|").split("|")};function E(e){if(e.__esModule)return e;var t=Object.defineProperty({},"__esModule",{value:!0});return Object.keys(e).forEach((function(s){var n=Object.getOwnPropertyDescriptor(e,s);Object.defineProperty(t,s,n.get?n:{enumerable:!0,get:function(){return e[s]}})})),t}var k=E(Object.freeze({__proto__:null,default:function(e,t){t=t||{};var s,n,r,i,o,a={_:[]},c=0,l=0,u=0,d=(e=e||[]).length;const h=void 0!==t.alias,f=void 0!==t.unknown,p=void 0!==t.default;if(t.alias=t.alias||{},t.string=v(t.string),t.boolean=v(t.boolean),h)for(s in t.alias)for(n=t.alias[s]=v(t.alias[s]),c=0;c<n.length;c++)(t.alias[n[c]]=n.concat(s)).splice(c,1);for(c=t.boolean.length;c-- >0;)for(l=(n=t.alias[t.boolean[c]]||[]).length;l-- >0;)t.boolean.push(n[l]);for(c=t.string.length;c-- >0;)for(l=(n=t.alias[t.string[c]]||[]).length;l-- >0;)t.string.push(n[l]);if(p)for(s in t.default)if(i=typeof t.default[s],n=t.alias[s]=t.alias[s]||[],void 0!==t[i])for(t[i].push(s),c=0;c<n.length;c++)t[i].push(n[c]);const m=f?Object.keys(t.alias):[];for(c=0;c<d;c++){if("--"===(r=e[c])){a._=a._.concat(e.slice(++c));break}for(l=0;l<r.length&&45===r.charCodeAt(l);l++);if(0===l)a._.push(r);else if("no-"===r.substring(l,l+3)){if(i=r.substring(l+3),f&&!~m.indexOf(i))return t.unknown(r);a[i]=!1}else{for(u=l+1;u<r.length&&61!==r.charCodeAt(u);u++);for(i=r.substring(l,u),o=r.substring(++u)||c+1===d||45===(""+e[c+1]).charCodeAt(0)||e[++c],n=2===l?[i]:i,u=0;u<n.length;u++){if(i=n[u],f&&!~m.indexOf(i))return t.unknown("-".repeat(l)+i);b(a,i,u+1<n.length||o,t)}}}if(p)for(s in t.default)void 0===a[s]&&(a[s]=t.default[s]);if(h)for(s in a)for(n=t.alias[s]||[];n.length>0;)a[n.shift()]=a[s];return a}}));const N="__all__",S="__default__";class C{constructor(e,t){let[s,...n]=e.split(/\s+/);t=t||n.length>0,this.bin=s,this.ver="0.0.0",this.default="",this.tree={},this.command(N),this.command([S].concat(t?n:"<command>").join(" ")),this.single=t,this.curr=""}command(e,t,s={}){if(this.single)throw new Error('Disable "single" mode to add commands');let n=[],r=[],i=/(\[|<)/;if(e.split(/\s+/).forEach((e=>{(i.test(e.charAt(0))?r:n).push(e)})),n=n.join(" "),n in this.tree)throw new Error(`Command already exists: ${n}`);return n.includes("__")||r.unshift(n),r=r.join(" "),this.curr=n,s.default&&(this.default=n),this.tree[n]={usage:r,alibi:[],options:[],alias:{},default:{},examples:[]},s.alias&&this.alias(s.alias),t&&this.describe(t),this}describe(e){return this.tree[this.curr||S].describe=Array.isArray(e)?e:I(e),this}alias(...e){if(this.single)throw new Error('Cannot call `alias()` in "single" mode');if(!this.curr)throw new Error("Cannot call `alias()` before defining a command");return(this.tree[this.curr].alibi=this.tree[this.curr].alibi.concat(...e)).forEach((e=>this.tree[e]=this.curr)),this}option(e,t,s){let n=this.tree[this.curr||N],[r,i]=T(e);if(i&&i.length>1&&([r,i]=[i,r]),e=`--${r}`,i&&i.length>0){e=`-${i}, ${e}`;let t=n.alias[i];n.alias[i]=(t||[]).concat(r)}let o=[e,t||""];return void 0!==s?(o.push(s),n.default[r]=s):i||(n.default[r]=void 0),n.options.push(o),this}action(e){return this.tree[this.curr||S].handler=e,this}example(e){return this.tree[this.curr||S].examples.push(e),this}version(e){return this.ver=e,this}parse(e,t={}){e=e.slice();let s,n,r,i,o=2,a=k(e.slice(o),{alias:{h:"help",v:"version"}}),c=this.single,l=this.bin,u="";if(c)i=this.tree[S];else{let t,c=1,d=a._.length+1;for(;c<d;c++)if(s=a._.slice(0,c).join(" "),t=this.tree[s],"string"==typeof t)n=(u=t).split(" "),e.splice(e.indexOf(a._[0]),c,...n),c+=n.length-c;else if(t)u=s;else if(u)break;if(i=this.tree[u],r=void 0===i,r)if(this.default)u=this.default,i=this.tree[u],e.unshift(u),o++;else if(s)return A(l,`Invalid command: ${s}`)}if(a.help)return this.help(!c&&!r&&u);if(a.version)return this._version();if(!c&&void 0===i)return A(l,"No command specified.");let d=this.tree[N];t.alias=Object.assign(d.alias,i.alias,t.alias),t.default=Object.assign(d.default,i.default,t.default),s=u.split(" "),n=e.indexOf(s[0],2),~n&&e.splice(n,s.length);let h=k(e.slice(o),t);if(!h||"string"==typeof h)return A(l,h||"Parsed unknown option flag(s)!");let f=i.usage.split(/\s+/),p=f.filter((e=>"<"===e.charAt(0))),m=h._.splice(0,p.length);if(m.length<p.length)return u&&(l+=` ${u}`),A(l,"Insufficient arguments!");f.filter((e=>"["===e.charAt(0))).forEach((e=>{m.push(h._.shift())})),m.push(h);let g=i.handler;return t.lazy?{args:m,name:u,handler:g}:g.apply(null,m)}help(e){console.log(j(this.bin,this.tree,e||S,this.single))}_version(){console.log(`${this.bin}, ${this.ver}`)}}function P(e){return Array.isArray(e)?Object.freeze(e.map(P)):null===e||"object"!=typeof e?e:"$$date$$"in e?Object.freeze(new Date(e.$$date$$)):"$$undefined$$"in e?void 0:Object.freeze(Object.entries(e).reduce(((e,[t,s])=>({...e,[t]:P(s)})),{}))}function q(e){return Array.isArray(e)?e.map(q):void 0===e?{$$undefined$$:!0}:e instanceof Date?{$$date$$:e.getTime()}:null===e||"object"!=typeof e?e:Object.entries(e).reduce(((e,[t,s])=>({...e,[t]:q(s)})),{})}const M=Symbol("jsrpc");class z extends l.default{constructor(e){super();const{callTimeout:t,...s}=e,n=function(e){const t=new Map;let s=!1;return e.on("connection",(e=>{t.set(e,0),e.once("close",(()=>t.delete(e)))})),e.on("request",((e,n)=>{const{socket:r}=e;t.set(r,t.get(r)+1),n.once("finish",(()=>{const e=t.get(r)-1;t.set(r,e),s&&0===e&&r.end()}))})),e.stop=n=>new Promise(((r,i)=>{if(s)return r();s=!0;let o,a=!0;Array.from(t).map((([e,t])=>t||e.end())),e.close((e=>{if(e)return i(e);o&&clearTimeout(o),r(a)})),n&&(o=setTimeout((()=>{o=null,a=!1,Array.from(t.keys()).map((e=>e.end())),setImmediate((()=>Array.from(t.keys()).map((e=>e.destroy()))))}),n))})),e}(c.default.createServer(F.bind(this)));Object.defineProperty(this,M,{configurable:!0,value:{callTimeout:t,options:s,methods:{},server:n,started:!1}})}static create(e){return new z(e)}handle(e,t){return this[M].methods[e]=t,this}start(){return new Promise(((e,t)=>{const{started:s,server:n,options:r}=this[M];if(s)return e(this);n.once("error",t),n.listen(r,(s=>{if(s)return t(s);this[M].started=!0,this.emit("start"),e(this)}))}))}get started(){return this[M].started}get httpServer(){return this[M].server}async stop(){this[M].started&&(this[M].started=!1,await this[M].server.stop(5e3),this.emit("stop"))}}async function F(e,t){let s;try{const{methods:i,callTimeout:o}=this[M],a=await function(e){return new Promise(((t,s)=>{let n="";e.setEncoding("utf8"),e.on("error",s).on("data",(e=>{n+=e})).on("end",(()=>{try{t(JSON.parse(n))}catch(e){s(new R(n))}}))}))}(e),{id:c,jsonrpc:l,method:u,params:d}=a;if(s=c,"2.0"!==l)throw new R(a);const h=i[u];if(!h)throw new B(a);if(!Array.isArray(d))throw new R(a);const f=P(d);this.emit("call",{method:u,params:f});let p=Promise.resolve(h.apply(this,f));o&&(n=p,r=o,p=new Promise(((e,t)=>{const s=setTimeout((()=>t(new L)),r);n.then((t=>{clearTimeout(s),e(t)}),t)})));V(t,200,{jsonrpc:"2.0",result:q(await p),id:s})}catch(e){const{name:n,message:r}=e,i=q({name:n,message:r,...e});V(t,e.status||500,{jsonrpc:"2.0",error:i,id:s})}var n,r}function V(e,t,s){s=JSON.stringify(s),e.writeHead(t,{"content-type":"application/json;charset=utf-8","content-length":Buffer.byteLength(s)}),e.end(s)}class J extends Error{constructor(e,t){super(e),this.name=this.constructor.name,Error.captureStackTrace(this,this.constructor),Object.assign(this,t)}}class B extends J{constructor(e){super("Method not found",{status:404,body:e})}}class R extends J{constructor(e){super("Bad request",{status:400,body:e})}}class L extends J{constructor(e){super("Timed out",{status:504,body:e})}}const K={};class U{constructor(e){this.options=e}async call(e,...t){const s=JSON.stringify({jsonrpc:"2.0",method:e,params:q(t)}),r={...this.options,method:"POST",headers:{"Content-Type":"application/json;charset=utf-8","Content-Length":Buffer.byteLength(s),Connection:"keep-alive"}},i=await function(e,t){return new Promise(((s,r)=>{const i=n.request(e,s);i.once("error",r),i.write(t),i.end()}))}(r,s),o=await async function(e){e.setEncoding("utf8");let t="";for await(const s of e)t+=s;return JSON.parse(t)}(i);if(o.error){const e=P(o.error);throw new(U.error(e.name))(e)}return P(o.result)}static error(e){let t=K[e];return t||(t=function(e){function t(e){const{name:t,...s}=e;Error.call(this),Error.captureStackTrace(this,this.constructor),Object.assign(this,s)}return Object.defineProperties(t,{name:{value:e,configurable:!0}}),t.prototype=Object.create(Error.prototype,{name:{value:e,configurable:!0},constructor:{value:t,configurable:!0}}),t}(e),K[e]=t,t)}}function G(e){return e&&"object"==typeof e&&"default"in e?e:{default:e}}var H=G(E(Object.freeze({__proto__:null,default:class{constructor({width:e=1}={}){this.width=e,this.count=0,this.awaiters=[]}acquire(){return this.count<this.width?(this.count++,Promise.resolve()):new Promise((e=>this.awaiters.push(e)))}release(){this.count&&(this.waiting?this.awaiters.shift()():this.count--)}get waiting(){return this.awaiters.length}async exec(e){try{return await this.acquire(),await Promise.resolve(e())}finally{this.release()}}}}))),Z=G(u.default);class Q extends Error{constructor(e,t){super(t),this.name=e,Error.captureStackTrace(this,this.constructor)}}class W extends Q{constructor(e,t){super("KeyViolation","Key violation error"),this.fieldName=t,this.record=e}}class X extends Q{constructor(e){super("NotExists","Record does not exist"),this.record=e}}class Y extends Q{constructor(e){super("NoIndex","No such index"),this.fieldName=e}}function ee(e,t){let s=0;for(t=t.split(".");e&&s<t.length;)e=e[t[s++]];return void 0===e||s<t.length?void 0:e}function te(e,t){const s=(n=se(e),Array.from(n).reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)&4294967295),0));var n;for(let e=0;e<1e8;e++){const n=(s+e&2147483647).toString(36);if(!t.has(n))return n}throw new Error("Could not generate unique id")}function se(e){return JSON.stringify(e,(function(e,t){return this[e]instanceof Date?{$date:this[e].toISOString()}:t}))}function ne(e){return JSON.parse(e,(function(e,t){return"$date"===e?new Date(t):"object"==typeof t&&"$date"in t?t.$date:t}))}class re{static create(e){return new(e.unique?ie:re)(e)}constructor(e){this.options=e,this.data=new Map}find(e){const t=this.data.get(e);return t?Array.from(t):[]}findOne(e){const t=this.data.get(e);return t?t.values().next().value:void 0}addDoc(e){const t=ee(e,this.options.fieldName);Array.isArray(t)?t.forEach((t=>this.linkValueToDoc(t,e))):this.linkValueToDoc(t,e)}removeDoc(e){const t=ee(e,this.options.fieldName);Array.isArray(t)?t.forEach((t=>this.unlinkValueFromDoc(t,e))):this.unlinkValueFromDoc(t,e)}linkValueToDoc(e,t){if(null==e&&this.options.sparse)return;const s=this.data.get(e);s?s.add(t):this.data.set(e,new Set([t]))}unlinkValueFromDoc(e,t){const s=this.data.get(e);s&&(s.delete(t),s.size||this.data.delete(e))}}class ie extends re{findOne(e){return this.data.get(e)}find(e){return this.findOne(e)}linkValueToDoc(e,t){if(null!=e||!this.options.sparse){if(this.data.has(e))throw new W(t,this.options.fieldName);this.data.set(e,t)}}unlinkValueFromDoc(e,t){this.data.get(e)===t&&this.data.delete(e)}}const{readFile:oe,appendFile:ae,open:ce,rename:le}=Z.default.promises;class ue{constructor(e){this.options={serialize:se,deserialize:ne,special:{deleted:"$$deleted",addIndex:"$$addIndex",deleteIndex:"$$deleteIndex"},...e},this.empty()}empty(){this.indexes={_id:re.create({fieldName:"_id",unique:!0})}}async ensureIndex(e){const{fieldName:t}=e,{addIndex:s}=this.options.special;this.hasIndex(t)||(this.addIndex(e),await this.append([{[s]:e}]))}async deleteIndex(e){const{deleteIndex:t}=this.options.special;if("_id"!==e){if(!this.hasIndex(e))throw new Y(e);this.removeIndex(e),await this.append([{[t]:{fieldName:e}}])}}addIndex(e){const{fieldName:t}=e,s=re.create(e);this.allDocs().forEach((e=>s.addDoc(e))),this.indexes[t]=s}removeIndex(e){delete this.indexes[e]}hasIndex(e){return Boolean(this.indexes[e])}find(e,t){if(!this.hasIndex(e))throw new Y(e);return this.indexes[e].find(t)}findOne(e,t){if(!this.hasIndex(e))throw new Y(e);return this.indexes[e].findOne(t)}async upsert(e,t){let s,n;return Array.isArray(e)?(s=e.map((e=>this.addDoc(e,t))),n=s):(s=this.addDoc(e,t),n=[s]),await this.append(n),s}async delete(e){let t,s;const{deleted:n}=this.options.special;return Array.isArray(e)?(t=e.map((e=>this.removeDoc(e))),s=t):(t=this.removeDoc(e),s=[t]),s=s.map((e=>({[n]:e}))),await this.append(s),t}addDoc(e,{mustExist:t=!1,mustNotExist:s=!1}={}){const{_id:n,...r}=e,i=this.indexes._id.findOne(n);if(!i&&t)throw new X(e);if(i&&s)throw new W(e,"_id");var o;e={_id:n||te(e,this.indexes._id.data),...(o=r,Object.entries(o).reduce(((e,[t,s])=>(void 0!==s&&(e[t]=s),e)),{}))},Object.freeze(e);const a=Object.values(this.indexes);try{return a.forEach((t=>{i&&t.removeDoc(i),t.addDoc(e)})),e}catch(t){throw a.forEach((t=>{t.removeDoc(e),i&&(t.removeDoc(i),t.addDoc(i))})),t}}removeDoc(e){const t=Object.values(this.indexes),s=this.indexes._id.findOne(e._id);if(!s)throw new X(e);return t.forEach((e=>e.removeDoc(s))),s}allDocs(){return Array.from(this.indexes._id.data.values())}async hydrate(){const{filename:e,deserialize:t,special:{deleted:s,addIndex:n,deleteIndex:r}}=this.options,i=await oe(e,{encoding:"utf8",flag:"a+"});this.empty();for(const e of i.split(/\n/).filter(Boolean)){const i=t(e);n in i?this.addIndex(i[n]):r in i?this.deleteIndex(i[r].fieldName):s in i?this.removeDoc(i[s]):this.addDoc(i)}}async rewrite({sorted:e=!1}={}){const{filename:t,serialize:s,special:{addIndex:n}}=this.options,r=t+"~",i=this.allDocs();e&&("string"!=typeof e&&"function"!=typeof e&&(e="_id"),i.sort(function(e){if("function"!=typeof e){const t=e;e=e=>ee(e,t)}return(t,s)=>{const n=e(t),r=e(s);return n<r?-1:n>r?1:0}}(e)));const o=Object.values(this.indexes).filter((e=>"_id"!==e.options.fieldName)).map((e=>({[n]:e.options}))).concat(i).map((e=>s(e)+"\n")),a=await ce(r,"w");await a.writeFile(o.join(""),"utf8"),await a.sync(),await a.close(),await le(r,t)}async append(e){const{filename:t,serialize:s}=this.options,n=e.map((e=>s(e)+"\n")).join("");await ae(t,n,"utf8")}}class de{constructor(e){if("string"==typeof e&&(e={filename:e}),!e)throw new TypeError("No options given");this.loaded=!1;const t=new H.default;Object.defineProperties(this,{_ds:{value:new ue(e),configurable:!0},_lock:{value:t,configurable:!0},_execute:{value:t.exec.bind(t),configurable:!0},_autoCompaction:{value:void 0,configurable:!0,writable:!0}}),this._lock.acquire(),e.autoload&&this.load(),e.autocompact&&this.setAutoCompaction(e.autocompact)}async load(){this.loaded||(this.loaded=!0,await this._ds.hydrate(),await this._ds.rewrite(),this._lock.release())}reload(){return this._execute((()=>this._ds.hydrate()))}compact(e){return this._execute((()=>this._ds.rewrite(e)))}ensureIndex(e){return this._execute((()=>this._ds.ensureIndex(e)))}deleteIndex(e){return this._execute((()=>this._ds.deleteIndex(e)))}insert(e){return this._execute((()=>this._ds.upsert(e,{mustNotExist:!0})))}update(e){return this._execute((()=>this._ds.upsert(e,{mustExist:!0})))}upsert(e){return this._execute((()=>this._ds.upsert(e)))}delete(e){return this._execute((()=>this._ds.delete(e)))}getAll(){return this._execute((async()=>this._ds.allDocs()))}find(e,t){return this._execute((async()=>this._ds.find(e,t)))}findOne(e,t){return this._execute((async()=>this._ds.findOne(e,t)))}setAutoCompaction(e,t){this.stopAutoCompaction(),this._autoCompaction=setInterval((()=>this.compact(t)),e)}stopAutoCompaction(){this._autoCompaction&&(clearInterval(this._autoCompaction),this._autoCompaction=void 0)}}Object.assign(de,{KeyViolation:W,NotExists:X,NoIndex:Y});var he=de;function fe(e){return new Promise(((t,s)=>{const n=setTimeout((()=>s(new Error("timed out connecting to server"))),500),r=o.createConnection(e,(()=>{clearTimeout(n),setImmediate((()=>{r.destroy(),t(!0)}))}));r.once("error",(()=>{clearTimeout(n),t(!1)}))}))}function pe(e){return(...t)=>Promise.resolve().then((()=>e(...t))).catch((e=>{console.error(e),process.exit(2)}))}const me=new Set(["ensureIndex","deleteIndex","insert","update","upsert","delete","find","findOne","getAll","compact","reload"]);class ge extends z{constructor({files:t=".",idleTime:s="30m",...n}){super(n),t=e.resolve(t),s=w(s+"");const r=Date.now();Object.assign(this,{files:t,idleTime:s,startTime:r}),this.openDatabases=new Map,this.handle("shutdown",we.bind(this)).handle("status",ye.bind(this)).handle("dispatch",_e.bind(this)).handle("housekeep",ve.bind(this)).handle("clear",be.bind(this)),setInterval(ve.bind(this),s).unref()}}function we(){setTimeout((()=>this.stop(5e3)))}function ye(){const e=Date.now();return{uptime:e-this.startTime,idleTime:this.idleTime,files:this.files,databases:Array.from(this.openDatabases.entries()).map((([t,{db:s,lastTouch:n}])=>({name:t,uptime:e-n})))}}function ve(){const e=Date.now();Array.from(this.openDatabases.entries()).forEach((([t,{lastTouch:s}])=>{e-s>this.idleTime&&this.openDatabases.delete(t)}))}function be(){this.openDatabases.clear()}async function _e(t,s,...n){if(!me.has(s))throw new Error(`Unknown method: ${s}`);t=e.resolve(this.files,t);const r=Date.now();let i;const o=this.openDatabases.get(t);return o?(o.lastTouch=r,i=o.db):(i=new he(t),this.openDatabases.set(t,{db:i,lastTouch:r})),i.loaded||await i.load(),i[s](...n)}const xe=new C("jsdbd",$e);var $e;const Oe=e.resolve(t.homedir(),".databases");async function De({port:e},t,...s){await fe(e)||(console.log(`No server active on port ${e}`),process.exit(1));return new U({port:e}).call(t,...s)}xe.version("2.3.0").option("--port, -p","The port to use",39720),xe.command("status","shows the status of the jsdbd daemon",{default:!0}).action(pe((async function({port:e}){const t=await De({port:e},"status");console.log(`jsdb server running on port ${e}\n`),console.log(`Uptime: ${w(t.uptime,{long:!0})}`),console.log(`Housekeep every ${w(t.idleTime)}`),console.log(`Database files: ${t.files}\n`);const{databases:s}=t;if(!s.length)return void console.log("No databases open");console.log("Databases open:");for(const{name:e,uptime:t}of s)console.log(`  ${e} (${w(t,{long:!0})})`)}))),xe.command("start","starts the server").option("-f, --files","where files area stored",Oe).option("-s, --silent","be quiet").option("--idle-time","cleaning interval","30m").action(pe((async function(t){let{files:n,idleTime:r,port:i,silent:o}=t;if(n=e.resolve(n),await fe(i))return void(o||console.log(`Server already active on port ${i}`));const a=process.execPath,c=[...process.execArgv,process.argv[1],"__server","--port",i,"--files",n,"--idle-time",r];s.spawn(a,c,{stdio:"ignore",detached:!0}).unref(),o||console.log(`Serving databases in ${n} on port ${i}`)}))),xe.command("clear","closes all databases").action(pe((async function({port:e}){await De({port:e},"clear"),console.log(`All databases cleared on port ${e}`)}))),xe.command("stop","stops the server").action(pe((async function({port:e}){await De({port:e},"shutdown"),console.log(`Server on port ${e} shut down`)}))),xe.command("__server","runs the server (internal use)").action(pe((function(e){const{idleTime:t,files:s,port:n}=e,r=new ge({idleTime:t,files:s,port:n}),i=()=>r.stop();return process.on("SIGINT",i).on("SIGTERM",i),r.start()}))),xe.parse(process.argv,{alias:{idleTime:"idle-time"}});
+'use strict';
+
+var path = require('path');
+var os = require('os');
+var child_process = require('child_process');
+var ms = require('ms');
+var sade = require('sade');
+var jsrpc = require('jsrpc');
+var Database = require('jsdb');
+var net = require('net');
+
+function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+
+var ms__default = /*#__PURE__*/_interopDefaultLegacy(ms);
+var sade__default = /*#__PURE__*/_interopDefaultLegacy(sade);
+var Database__default = /*#__PURE__*/_interopDefaultLegacy(Database);
+
+function portActive (port) {
+  return new Promise((resolve, reject) => {
+    const tm = setTimeout(
+      () => reject(new Error('timed out connecting to server')),
+      500
+    );
+    const conn = net.createConnection(port, () => {
+      clearTimeout(tm);
+      setImmediate(() => {
+        conn.destroy();
+        resolve(true);
+      });
+    });
+    conn.once('error', () => {
+      clearTimeout(tm);
+      resolve(false);
+    });
+  })
+}
+function wrap (fn) {
+  return (...args) =>
+    Promise.resolve()
+      .then(() => fn(...args))
+      .catch(err => {
+        console.error(err);
+        process.exit(2);
+      })
+}
+const jsdbMethods = new Set([
+  'ensureIndex',
+  'deleteIndex',
+  'insert',
+  'update',
+  'upsert',
+  'delete',
+  'find',
+  'findOne',
+  'getAll',
+  'compact',
+  'reload'
+]);
+
+class JsdbServer extends jsrpc.RpcServer {
+  constructor ({ files = '.', idleTime = '30m', ...options }) {
+    super(options);
+    files = path.resolve(files);
+    idleTime = ms__default['default'](idleTime + '');
+    const startTime = Date.now();
+    Object.assign(this, { files, idleTime, startTime });
+    this.openDatabases = new Map();
+    this.handle('shutdown', shutdown.bind(this))
+      .handle('status', status.bind(this))
+      .handle('dispatch', dispatch.bind(this))
+      .handle('housekeep', housekeep.bind(this))
+      .handle('clear', clear.bind(this));
+    setInterval(housekeep.bind(this), idleTime).unref();
+  }
+}
+function shutdown () {
+  setTimeout(() => this.stop(5000));
+}
+function status () {
+  const now = Date.now();
+  return {
+    uptime: now - this.startTime,
+    idleTime: this.idleTime,
+    files: this.files,
+    databases: Array.from(this.openDatabases.entries()).map(
+      ([name, { db, lastTouch }]) => ({ name, uptime: now - lastTouch })
+    )
+  }
+}
+function housekeep () {
+  const now = Date.now();
+  Array.from(this.openDatabases.entries()).forEach(
+    ([filename, { lastTouch }]) => {
+      if (now - lastTouch > this.idleTime) {
+        this.openDatabases.delete(filename);
+      }
+    }
+  );
+}
+function clear () {
+  this.openDatabases.clear();
+}
+async function dispatch (filename, method, ...args) {
+  if (!jsdbMethods.has(method)) {
+    throw new Error(`Unknown method: ${method}`)
+  }
+  filename = path.resolve(this.files, filename);
+  const lastTouch = Date.now();
+  let db;
+  const rec = this.openDatabases.get(filename);
+  if (rec) {
+    rec.lastTouch = lastTouch;
+    db = rec.db;
+  } else {
+    db = new Database__default['default'](filename);
+    this.openDatabases.set(filename, { db, lastTouch });
+  }
+  if (!db.loaded) await db.load();
+  return db[method](...args)
+}
+
+var version = "2.3.0";
+
+const prog = sade__default['default']('jsdbd');
+const DEFAULT_FILES = path.resolve(os.homedir(), '.databases');
+prog.version(version).option('--port, -p', 'The port to use', 39720);
+prog
+  .command('status', 'shows the status of the jsdbd daemon', { default: true })
+  .action(wrap(showStatus));
+prog
+  .command('start', 'starts the server')
+  .option('-f, --files', 'where files area stored', DEFAULT_FILES)
+  .option('-s, --silent', 'be quiet')
+  .option('--idle-time', 'cleaning interval', '30m')
+  .action(wrap(startServer));
+prog.command('clear', 'closes all databases').action(wrap(clearServer));
+prog.command('stop', 'stops the server').action(wrap(stopServer));
+prog
+  .command('__server', 'runs the server (internal use)')
+  .action(wrap(runServer));
+prog.parse(process.argv, {
+  alias: {
+    idleTime: 'idle-time'
+  }
+});
+async function startServer (opts) {
+  let { files, idleTime, port, silent } = opts;
+  files = path.resolve(files);
+  if (await portActive(port)) {
+    if (!silent) console.log(`Server already active on port ${port}`);
+    return
+  }
+  const cmd = process.execPath;
+  const args = [
+    ...process.execArgv,
+    process.argv[1],
+    '__server',
+    '--port',
+    port,
+    '--files',
+    files,
+    '--idle-time',
+    idleTime
+  ];
+  const spawnOpts = {
+    stdio: 'ignore',
+    detached: true
+  };
+  child_process.spawn(cmd, args, spawnOpts).unref();
+  if (!silent) console.log(`Serving databases in ${files} on port ${port}`);
+}
+function runServer (opts) {
+  const { idleTime, files, port } = opts;
+  const server = new JsdbServer({ idleTime, files, port });
+  const shutdown = () => server.stop();
+  process.on('SIGINT', shutdown).on('SIGTERM', shutdown);
+  return server.start()
+}
+async function showStatus ({ port }) {
+  const status = await sendCommand({ port }, 'status');
+  console.log(`jsdb server running on port ${port}\n`);
+  console.log(`Uptime: ${ms__default['default'](status.uptime, { long: true })}`);
+  console.log(`Housekeep every ${ms__default['default'](status.idleTime)}`);
+  console.log(`Database files: ${status.files}\n`);
+  const { databases } = status;
+  if (!databases.length) {
+    console.log('No databases open');
+    return
+  }
+  console.log('Databases open:');
+  for (const { name, uptime } of databases) {
+    console.log(`  ${name} (${ms__default['default'](uptime, { long: true })})`);
+  }
+}
+async function stopServer ({ port }) {
+  await sendCommand({ port }, 'shutdown');
+  console.log(`Server on port ${port} shut down`);
+}
+async function clearServer ({ port }) {
+  await sendCommand({ port }, 'clear');
+  console.log(`All databases cleared on port ${port}`);
+}
+async function sendCommand ({ port }, method, ...args) {
+  if (!(await portActive(port))) {
+    console.log(`No server active on port ${port}`);
+    process.exit(1);
+  }
+  const client = new jsrpc.RpcClient({ port });
+  return client.call(method, ...args)
+}
