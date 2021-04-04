@@ -3,12 +3,14 @@ Description=JSDB Daemon
 After=network.target
 
 [Service]
-Type=forking
 User=alan
 WorkingDirectory=/home/alan/dev/jsdbd
 Environment=NODE_ENV=production
-ExecStart=/usr/local/bin/node dist/jsdbd start
-ExecStop=/usr/local/bin/node dist/jsdbd stop
+ExecStart=/usr/local/bin/node \
+	dist/jsdbd __server \
+	--files /home/alan/.databases \
+	--port 39720 \
+	--idle-time 30m
 
 [Install]
 WantedBy=multi-user.target
