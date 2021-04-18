@@ -20,6 +20,12 @@ Options:
 - `port` - the port of the server
 - `filename` - the name (relative to `files`) of the db file
 
+### check
+
+`await db.check()`
+
+Checks the connection for a database before you use it. Throws `Database.NoServer` if none can be found.
+
 ### status
 
 `const s = await Database.status()`

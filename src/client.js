@@ -25,7 +25,29 @@ export default class Database {
       this[method] = client.call.bind(client, 'dispatch', filename, method)
     }
   }
+
+  async check () {
+    try {
+      await client.call('status')
+    } catch (err) {
+      // istanbul ignore else
+      if (err.code === 'ECONNREFUSED') {
+        throw new NoServer(err)
+      } else {
+        throw err
+      }
+    }
+  }
 }
+
+class NoServer extends Error {
+  constructor (err) {
+    super('Could not find jsdbd')
+    Object.assign(this, err, { client })
+  }
+}
+
+Database.NoServer = NoServer
 
 jsdbErrors.forEach(name => {
   Database[name] = RpcClient.error(name)
