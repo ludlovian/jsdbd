@@ -5,12 +5,12 @@ import { spawn } from 'child_process'
 import ms from 'ms'
 import sade from 'sade'
 
-import { RpcClient } from 'jsrpc'
+import RpcClient from 'jsrpc/client'
 
-import JsdbServer from './server'
-import { version } from '../package.json'
-import { wrap, portActive } from './util'
+import JsdbServer from './server.mjs'
+import { wrap, portActive } from './util.mjs'
 
+const version = '__VERSION__'
 const prog = sade('jsdbd')
 
 const DEFAULT_FILES = resolve(homedir(), '.databases')

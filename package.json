@@ -2,39 +2,32 @@
   "name": "jsdbd",
   "version": "2.4.0",
   "description": "daemon version of jsdb",
-  "main": "dist/client.js",
-  "module": "dist/client.mjs",
+  "main": "src/client.mjs",
+  "module": "src/client.mjs",
+  "source": "src/client.mjs",
   "bin": {
-    "jsdbd": "dist/jsdbd"
+    "jsdbd": "dist/jsdbd.mjs"
   },
-  "source": "src",
   "scripts": {
-    "clean": "rm -rf dist/ node_modules/.cache/ .nyc_output/ coverage/",
-    "format": "prettier-standard {src,test}/*.js",
-    "lint": "standard {src,test}/*.js | snazzy",
-    "coverage": "npm run test && nyc report --reporter=html && sirv coverage -H 0.0.0.0 -p 8000",
-    "test": "nyc ava",
-    "pretest": "node -r esm src/jsdbd.js start --port 39799 --files . ",
-    "posttest": "node -r esm src/jsdbd.js stop --port 39799",
+    "clean": "rm -rf dist/ node_modules/.cache/ coverage/",
+    "format": "prettier-standard {src,test}/*.mjs",
+    "lint": "standard {src,test}/*.mjs | snazzy",
+    "coverage": "npm run test && c8 report --reporter=html && sirv coverage -H 0.0.0.0 -p 8000",
+    "test": "c8 ava",
+    "pretest": "node src/jsdbd.mjs start --port 39799 --files . ",
+    "posttest": "node src/jsdbd.mjs stop --port 39799",
     "build": "rollup -c rollup.config.js",
-    "postbuild": "chmod +x dist/jsdbd",
-    "version": "npm run build && git add dist/jsdbd"
+    "postbuild": "chmod +x dist/jsdbd.mjs",
+    "version": "npm run build && git add dist/jsdbd.mjs"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.0.0",
     "@rollup/plugin-json": "^4.1.0",
-    "ava": "^3.15.0",
-    "esm": "^3.2.25",
-    "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-hashbang": "^2.2.2",
-    "rollup-plugin-terser": "^7.0.2"
-  },
-  "ava": {
-    "require": [
-      "esm"
-    ]
+    "@rollup/plugin-node-resolve": "^11.2.1",
+    "@rollup/plugin-replace": "^2.4.2",
+    "ava": "^3.15.0"
   },
   "dependencies": {
     "jsdb": "github:ludlovian/jsdb",

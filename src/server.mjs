@@ -1,10 +1,9 @@
+import { resolve } from 'path'
 import ms from 'ms'
 
-import { RpcServer } from 'jsrpc'
 import Database from 'jsdb'
-import { resolve } from 'path'
-
-import { jsdbMethods } from './util'
+import RpcServer from 'jsrpc/server'
+import { jsdbMethods } from './util.mjs'
 
 export default class JsdbServer extends RpcServer {
   constructor ({ files = '.', idleTime = '30m', ...options }) {

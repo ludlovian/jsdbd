@@ -1,46 +1,25 @@
-import { terser } from 'rollup-plugin-terser'
-import cleanup from 'rollup-plugin-cleanup'
-import commonjs from '@rollup/plugin-commonjs'
-import json from '@rollup/plugin-json'
+import resolve from '@rollup/plugin-node-resolve'
+import replace from '@rollup/plugin-replace'
 
 export default [
   {
-    input: 'src/jsdbd.js',
-    external: [
-      'path',
-      'os',
-      'child_process',
-      'net',
-      'sade',
-      'ms',
-      'jsrpc',
-      'jsdb'
+    input: 'src/jsdbd.mjs',
+    external: [ 'sade', 'ms' ],
+    plugins: [
+      resolve(),
+      replace({
+        preventAssignment: true,
+        values: {
+          __VERSION__: process.env.npm_package_version
+        }
+      })
     ],
-    plugins: [json(), commonjs(), cleanup()],
     output: [
       {
-        file: 'dist/jsdbd',
-        format: 'cjs',
+        file: 'dist/jsdbd.mjs',
+        format: 'esm',
         sourcemap: false,
         banner: '#!/usr/bin/env node'
-      }
-    ]
-  },
-  {
-    input: 'src/client.js',
-    external: ['jsrpc', 'child_process', 'net'],
-    plugins: [cleanup(), process.env.NODE_ENV === 'production' && terser()],
-    output: [
-      {
-        file: 'dist/client.js',
-        format: 'cjs',
-        exports: 'default',
-        sourcemap: false
-      },
-      {
-        file: 'dist/client.mjs',
-        format: 'esm',
-        sourcemap: false
       }
     ]
   }

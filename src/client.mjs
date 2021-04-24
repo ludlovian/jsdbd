@@ -1,7 +1,7 @@
 'use strict'
 
-import { RpcClient } from 'jsrpc'
-import { jsdbMethods, jsdbErrors } from './util'
+import RpcClient from 'jsrpc/client'
+import { jsdbMethods, jsdbErrors } from './util.mjs'
 
 let client
 
@@ -9,9 +9,8 @@ const staticMethods = ['status', 'housekeep', 'clear', 'shutdown']
 
 export default class Database {
   constructor (opts) {
-    // istanbul ignore if
+    /* c8 ignore next 2 */
     if (typeof opts === 'string') opts = { filename: opts }
-    // istanbul ignore next
     const { port = 39720, ...options } = opts
     this.options = options
     if (!client) {
@@ -29,8 +28,8 @@ export default class Database {
   async check () {
     try {
       await client.call('status')
+      /* c8 ignore next 6 */
     } catch (err) {
-      // istanbul ignore else
       if (err.code === 'ECONNREFUSED') {
         throw new NoServer(err)
       } else {

@@ -2,10 +2,10 @@
 
 import { createConnection } from 'net'
 
+/* c8 ignore start */
 export function portActive (port) {
   return new Promise((resolve, reject) => {
     const tm = setTimeout(
-      // istanbul ignore next
       () => reject(new Error('timed out connecting to server')),
       500
     )
@@ -16,13 +16,13 @@ export function portActive (port) {
         resolve(true)
       })
     })
-    // istanbul ignore next
     conn.once('error', () => {
       clearTimeout(tm)
       resolve(false)
     })
   })
 }
+/* c8 ignore end */
 
 export function wrap (fn) {
   return (...args) =>

@@ -1,9 +1,9 @@
-'use strict'
 import test from 'ava'
-import Database from '../src/client'
 import fs from 'fs'
 import { promisify } from 'util'
 import { exec as _exec } from 'child_process'
+
+import Database from '../src/client.mjs'
 
 const readFile = promisify(fs.readFile)
 const exec = promisify(_exec)
