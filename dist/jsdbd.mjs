@@ -965,7 +965,7 @@ async function dispatch (filename, method, ...args) {
   return db[method](...args)
 }
 
-const version = '2.4.0';
+const version = '2.5.0';
 const prog = sade('jsdbd');
 
 const DEFAULT_FILES = resolve(homedir(), '.databases');
