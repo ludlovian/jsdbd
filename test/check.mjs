@@ -1,10 +1,16 @@
-import test from 'ava'
+import { test } from 'uvu'
+import * as assert from 'uvu/assert'
 
 import Database from '../src/client.mjs'
 
-test('check server', async t => {
+test('check server', async () => {
+  Database._reset()
+
   const db = new Database({ port: 39798 })
-  await t.throwsAsync(() => db.check(), {
-    instanceOf: Database.NoServer
-  })
+
+  db.check().then(assert.unreachable, err =>
+    assert.instance(err, Database.NoServer)
+  )
 })
+
+test.run()

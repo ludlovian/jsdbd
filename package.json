@@ -13,7 +13,7 @@
     "format": "prettier-standard {src,test}/*.mjs",
     "lint": "standard {src,test}/*.mjs | snazzy",
     "coverage": "npm run test && c8 report --reporter=html && sirv coverage -H 0.0.0.0 -p 8000",
-    "test": "c8 ava",
+    "test": "c8 uvu",
     "pretest": "node src/jsdbd.mjs start --port 39799 --files . ",
     "posttest": "node src/jsdbd.mjs stop --port 39799",
     "build": "rollup -c rollup.config.js",
@@ -23,11 +23,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.0.0",
-    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.2.1",
     "@rollup/plugin-replace": "^2.4.2",
-    "ava": "^3.15.0"
+    "uvu": "^0.5.1"
   },
   "dependencies": {
     "jsdb": "github:ludlovian/jsdb",

@@ -37,6 +37,10 @@ export default class Database {
       }
     }
   }
+
+  static _reset () {
+    client = undefined
+  }
 }
 
 class NoServer extends Error {
